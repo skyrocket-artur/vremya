@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Твоя жизнь в неделях</title>
+<meta name="description" content="Калькулятор: вся жизнь на одном листе. Сколько недель позади, сколько впереди и сколько недель работы можно выкупить капиталом.">
+<meta name="theme-color" content="#101016">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@500;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#101016;--card:#1a1a22;--card2:#22222c;--line:rgba(255,255,255,.09);--txt:#f4f4f7;--mut:#9a9aab;--y:#FFE14D;--c0:#FFD84D;--c1:#8FD694;--c2:#7CC7F2;--c3:#FF6B5E;--c4:#C9A7F5}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:Onest,system-ui,sans-serif;font-weight:600}
+.wrap{max-width:480px;margin:0 auto;padding:22px 16px 40px}
+h1{font-weight:800;font-size:34px;line-height:1.05;margin:6px 0 8px;letter-spacing:-.5px}
+h1 span{color:var(--y)}
+h2{font-weight:800;font-size:24px;margin:0 0 6px}
+p{color:var(--mut);font-size:16px;line-height:1.45;margin:0 0 12px}
+.mono{font-family:'JetBrains Mono',monospace}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin:14px 0}
+label{display:block;color:var(--mut);font-size:14px;margin:0 0 7px}
+.row{display:flex;gap:10px}
+.row>div{flex:1}
+input{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--txt);font:700 22px 'JetBrains Mono',monospace;padding:12px 14px;outline:none}
+input:focus{border-color:var(--y)}
+.seg{display:flex;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:transparent;color:var(--mut);font:600 16px Onest,sans-serif;padding:11px 4px;border-radius:10px;cursor:pointer}
+.seg button.on{background:#fff;color:#111}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:17px 18px;font:800 18px Onest,sans-serif;color:#111;background:var(--y);cursor:pointer;margin-top:14px;text-align:center;text-decoration:none;transition:transform .12s}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--txt);border:1.5px solid var(--line)}
+.btn.blue{background:#7CC7F2}
+.f{margin-top:14px}
+#res{display:none}
+.gridbox{background:#fff;border-radius:18px;padding:12px 10px 10px;margin-top:4px}
+.gridbox .t{color:#111;font-weight:800;font-size:17px;text-align:center;margin:2px 0 8px}
+canvas{display:block;width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.st{background:var(--card2);border-radius:16px;padding:13px 14px}
+.st b{display:block;font:700 26px 'JetBrains Mono',monospace;letter-spacing:-.5px}
+.st span{color:var(--mut);font-size:13px;line-height:1.3;display:block;margin-top:3px}
+.st.w{grid-column:1/-1}
+.big{font:800 21px Onest;line-height:1.3;margin:14px 0 2px}
+.big em{font-style:normal;color:var(--y)}
+.note{font-size:12.5px;color:#777788;line-height:1.4;margin-top:12px}
+.free{display:none;margin-top:14px;background:linear-gradient(150deg,rgba(255,225,77,.16),rgba(255,107,94,.10));border:1px solid rgba(255,225,77,.35);border-radius:18px;padding:16px}
+.free .h{font-weight:800;font-size:20px;line-height:1.25}
+.free .h em{font-style:normal;color:var(--y)}
+.me{margin-top:26px;background:linear-gradient(160deg,rgba(255,225,77,.10),rgba(124,199,242,.08));border:1px solid var(--line);border-radius:22px;padding:20px}
+.foot{text-align:center;color:#55556a;font-size:12px;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Вся жизнь <span>на одном листе</span></h1>
+  <p>Каждая клетка — одна неделя. Впиши свой возраст и посмотри, сколько недель позади, сколько впереди и какой этап занимает больше всего места.</p>
+
+  <div class="card" id="form">
+    <div class="row">
+      <div><label for="age">Мне лет</label><input id="age" type="number" inputmode="numeric" min="1" max="99" placeholder="33"></div>
+      <div><label>Пол</label><div class="seg" id="sex"><button data-v="m" class="on">М</button><button data-v="f">Ж</button></div></div>
+    </div>
+    <div class="f"><label>Сколько лет считаем</label><div class="seg" id="life"><button data-v="70">70</button><button data-v="80" class="on">80</button><button data-v="90">90</button></div></div>
+    <button class="btn" id="go">Показать мою жизнь</button>
+  </div>
+
+  <div id="res">
+    <div class="gridbox"><div class="t" id="gt">Твоя жизнь — 4 160 недель</div><canvas id="g"></canvas></div>
+    <div class="legend" id="leg"></div>
+    <div class="big" id="head"></div>
+    <div class="stats" id="stats"></div>
+
+    <div class="card" id="fin">
+      <h2>Выкупи недели работы</h2>
+      <p>Работа — самый длинный этап. Но только его можно сократить: когда капитал покрывает расходы, работать становится не обязательно.</p>
+      <div class="row">
+        <div><label for="exp">Расходы в месяц, ₽</label><input id="exp" type="text" inputmode="numeric" value="100 000"></div>
+        <div><label for="sav">Откладываю в месяц, ₽</label><input id="sav" type="text" inputmode="numeric" value="50 000"></div>
+      </div>
+      <div class="row f">
+        <div><label for="cap">Уже накоплено, ₽</label><input id="cap" type="text" inputmode="numeric" value="1 000 000"></div>
+        <div><label for="ret">Доходность сверх инфляции, %</label><input id="ret" type="text" inputmode="decimal" value="5"></div>
+      </div>
+      <button class="btn" id="calc">Посчитать</button>
+      <div class="free" id="free"></div>
+      <div class="note">Упрощённый расчёт: все суммы в сегодняшних деньгах, капитал считается достаточным, когда 4% в год покрывают расходы (правило 4%). Доходность не гарантирована. Это пример, а не инвестиционная рекомендация.</div>
+    </div>
+
+    <button class="btn" id="save">Сохранить картинку</button>
+    <button class="btn ghost" id="again">Пересчитать</button>
+
+    <div class="me">
+      <h2>Привет, я Артур</h2>
+      <p>Это я нарисовал свою жизнь на одном листе в ролике, который тебя сюда привёл. Инвестирую с 2017 года и рассказываю, как распоряжаться деньгами так, чтобы покупать себе время.</p>
+      <a class="btn" href="https://www.instagram.com/artur__yunusov/" target="_blank" rel="noopener">Подписаться в Instagram</a>
+      <a class="btn blue" href="https://t.me/YunusovArtur" target="_blank" rel="noopener">Мой Telegram-канал</a>
+    </div>
+  </div>
+  <div class="foot">Всё считается у тебя в браузере и никуда не отправляется.</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const COL=['#FFD84D','#8FD694','#7CC7F2','#FF6B5E','#C9A7F5'];
+const NAMES=['детство','школа','институт','работа','пенсия'];
+const GOLD='#FFB800';
+let S={age:null,sex:'m',life:80,fire:null,t0:0,ft0:0};
+const fmt=n=>Math.round(n).toLocaleString('ru-RU').replace(/[\u00a0\u202f ]/g,'\u2009');
+const num=s=>parseFloat(String(s).replace(/[\s\u00a0\u2009\u202f]/g,'').replace(',','.'))||0;
+function seg(id,key){ $(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{ $(id).querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); S[key]=key==='life'?+b.dataset.v:b.dataset.v; if(S.age!=null)show(false); }); }
+seg('sex','sex'); seg('life','life');
+['exp','sav','cap'].forEach(id=>$(id).addEventListener('input',e=>{const v=num(e.target.value);e.target.value=v?fmt(v):'';}));
+function stages(){ const R=S.sex==='f'?60:65, L=S.life;
+  const b=[0,7,18,22,R,L].map(v=>Math.min(v,L)); const out=[];
+  for(let i=0;i<5;i++) if(b[i+1]>b[i]) out.push({n:NAMES[i],c:COL[i],a:b[i],b:b[i+1]});
+  return out; }
+function stageAt(y){ return stages().find(s=>y>=s.a&&y<s.b); }
+const E=u=>1-Math.pow(1-Math.max(0,Math.min(1,u)),3);
+// ---- grid
+const cv=$('g'),cx=cv.getContext('2d'); let GW=0,cell=0,gap=0,LX=0;
+function layout(){ const w=cv.clientWidth||340, dpr=Math.min(3,window.devicePixelRatio||1);
+  LX=Math.round(w*0.055); const avail=w-LX; cell=avail/52; gap=Math.max(0.6,cell*0.16);
+  const h=S.life*cell+ (stages().length-1)*cell*0.6;
+  cv.width=w*dpr; cv.height=h*dpr; cv.style.height=h+'px'; cx.setTransform(dpr,0,0,dpr,0,0); GW=w; }
+function rowY(y){ const st=stages(); let off=0; st.forEach((s,i)=>{ if(i>0&&y>=s.a) off+=cell*0.6; }); return y*cell+off; }
+function drawGrid(now){
+  const t=(now-S.t0)/1000, lived=S.age*52, L=S.life;
+  cx.clearRect(0,0,GW,cv.height);
+  const fillN=Math.floor(lived*E(t/1.8));          // lived weeks animated
+  const reveal=E((t-0.1)/1.4);                      // stage colors fade in
+  const fr=S.fire, ft=(now-S.ft0)/1000;
+  cx.font=`600 ${Math.max(7,cell*0.95)}px 'JetBrains Mono',monospace`; cx.textAlign='right'; cx.textBaseline='middle';
+  for(let y=0;y<L;y++){
+    const st=stageAt(y), Y=rowY(y);
+    if(st&&y===st.a){ cx.fillStyle='#111'; cx.fillText(y,LX-3,Y+cell/2); } else if(y%5===0){ cx.fillStyle='#aaa'; cx.fillText(y,LX-3,Y+cell/2); }
+    for(let w=0;w<52;w++){
+      const k=y*52+w, X=LX+w*cell, s=cell-gap;
+      let col=st.c, a=0.28*reveal;
+      if(k<fillN){ a=1; }
+      else if(fr!=null && y>=fr.age && y<fr.R && k>=lived){ const d=E((ft-(y-fr.age)*0.025)/0.4); if(d>0){ col=GOLD; a=0.28*reveal*(1-d)+d; } }
+      cx.globalAlpha=a; cx.fillStyle=col; cx.fillRect(X,Y,s,s);
+      if(a<0.5){ cx.globalAlpha=1; cx.strokeStyle='rgba(0,0,0,.18)'; cx.lineWidth=0.5; cx.strokeRect(X+0.25,Y+0.25,s-0.5,s-0.5); }
+    }
+  }
+  cx.globalAlpha=1;
+  // you are here
+  const m=E((t-1.8)/0.5);
+  if(m>0&&S.age<L){ const Y=rowY(S.age)-gap/2; cx.globalAlpha=m; cx.fillStyle='#111'; cx.fillRect(LX-2,Y-1,GW-LX+2,2.2);
+    cx.font=`800 ${Math.max(11,cell*1.7)}px Onest`; cx.textAlign='right'; cx.textBaseline='bottom';
+    const lbl='ты здесь'; const tw=cx.measureText(lbl).width; cx.fillStyle='#111'; cx.beginPath(); cx.roundRect?cx.roundRect(GW-tw-12,Y-cell*2.2-4,tw+12,cell*2.2+2,5):cx.rect(GW-tw-12,Y-cell*2.2-4,tw+12,cell*2.2+2); cx.fill();
+    cx.fillStyle='#fff'; cx.fillText(lbl,GW-6,Y-3); cx.globalAlpha=1; }
+  return t<2.5 || (fr!=null && ft<3);
+}
+let raf=0; function loop(now){ const more=drawGrid(now); if(more) raf=requestAnimationFrame(loop); else raf=0; }
+function kick(){ if(!raf) raf=requestAnimationFrame(loop); }
+// ---- counters
+function countUp(el,to,dur=1200,suffix=''){ const t0=performance.now(); (function f(n){ const u=E((n-t0)/dur); el.textContent=fmt(to*u)+suffix; if(u<1)requestAnimationFrame(f); })(t0); }
+function show(anim=true){
+  const a=Math.round(num($('age').value)); if(!a||a<1||a>99){ $('age').focus(); return; }
+  S.age=Math.min(a,S.life); S.fire=null; $('free').style.display='none';
+  $('form').style.display='none'; $('res').style.display='block';
+  const L=S.life, R=S.sex==='f'?60:65, total=L*52, lived=S.age*52, left=Math.max(0,total-lived);
+  const work=Math.max(0,(Math.min(R,L)-Math.max(S.age,22)))*52;
+  const workAll=Math.max(0,Math.min(R,L)-22)*52, rest=total-workAll;
+  $('gt').textContent=`Твоя жизнь — ${fmt(total)} недель`;
+  $('leg').innerHTML=stages().map(s=>`<span><i style="background:${s.c}"></i>${s.n} ${s.b-s.a}</span>`).join('')+'<span>яркие клетки — уже прожито</span>';
+  $('head').innerHTML= workAll>rest ? `Работа занимает <em>${fmt(workAll)}</em> недель — больше, чем вся остальная жизнь вместе.` : `Работа занимает <em>${fmt(workAll)}</em> недель из ${fmt(total)}.`;
+  const yl=Math.max(0,L-S.age);
+  $('stats').innerHTML=`<div class="st"><b id="s1">0</b><span>недель позади (${Math.round(lived/total*100)}%)</span></div>
+   <div class="st"><b id="s2">0</b><span>недель впереди</span></div>
+   ${work>0?`<div class="st w"><b id="s3">0</b><span>недель работы впереди, если работать до ${R}</span></div>`:''}
+   <div class="st w"><b>${yl}</b><span>${yl===1?'лето, один Новый год':'лет: столько же летних отпусков и Новых годов'}</span></div>`;
+  layout(); S.t0=performance.now(); kick();
+  countUp($('s1'),lived); countUp($('s2'),left); if(work>0) countUp($('s3'),work);
+  if(anim) window.scrollTo({top:0,behavior:'smooth'});
+}
+function calc(){
+  if(S.age==null) return;
+  const exp=num($('exp').value), sav=num($('sav').value), cap0=num($('cap').value), r=num($('ret').value)/100;
+  const R=S.sex==='f'?60:65, L=S.life, target=exp*12/0.04, box=$('free'); box.style.display='block';
+  if(!exp){ box.innerHTML='<div class="h">Впиши расходы в месяц</div>'; return; }
+  let cap=cap0, m=0; const rm=Math.pow(1+r,1/12)-1, maxM=(Math.min(R,L)-S.age)*12;
+  while(cap<target && m<maxM){ cap=cap*(1+rm)+sav; m++; }
+  const fa=S.age+m/12;
+  if(cap>=target && m<maxM){
+    const weeks=Math.round((Math.min(R,L)-fa)*52);
+    S.fire={age:Math.ceil(fa),R:Math.min(R,L)}; S.ft0=performance.now(); kick();
+    box.innerHTML=`<div class="h">Капитал покроет расходы примерно к <em>${Math.ceil(fa)}</em> годам.</div><p style="margin:8px 0 0">Это <b class="mono" style="color:#fff">${fmt(weeks)}</b> недель, которые можно не работать. На листе они отмечены золотым.</p><p style="margin:8px 0 0">Нужный капитал: <b class="mono" style="color:#fff">${fmt(target)} ₽</b></p>`;
+  } else {
+    S.fire=null; kick();
+    const need=(function(){ let lo=0,hi=target; for(let i=0;i<50;i++){ const mid=(lo+hi)/2; let c=cap0; for(let k=0;k<maxM;k++) c=c*(1+rm)+mid; if(c>=target)hi=mid; else lo=mid; } return hi; })();
+    box.innerHTML=`<div class="h">С такими цифрами капитал не успевает до ${Math.min(R,L)} лет.</div><p style="margin:8px 0 0">Чтобы успеть к ${Math.min(R,L)}, откладывать нужно около <b class="mono" style="color:#fff">${fmt(need)} ₽</b> в месяц. Попробуй меньше расходы или больше взнос.</p>`;
+  }
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+$('go').onclick=()=>show(); $('age').addEventListener('keydown',e=>{if(e.key==='Enter')show();});
+$('calc').onclick=calc;
+$('again').onclick=()=>{ $('res').style.display='none'; $('form').style.display='block'; window.scrollTo({top:0,behavior:'smooth'}); };
+window.addEventListener('resize',()=>{ if(S.age!=null){ layout(); drawGrid(performance.now()+1e5); }});
+// ---- save image
+$('save').onclick=async()=>{
+  const W=1080,H=1350,c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+  x.fillStyle='#101016'; x.fillRect(0,0,W,H);
+  x.fillStyle='#fff'; x.font="800 58px Onest"; x.textAlign='left'; x.fillText('Вся жизнь на одном листе',60,100);
+  x.fillStyle='#9a9aab'; x.font="600 30px Onest"; x.fillText(`Мне ${S.age}. Позади ${fmt(S.age*52)} недель из ${fmt(S.life*52)}.`,60,152);
+  const gx=60, gy=200, gw=W-120, cs=gw/52, L=S.life, gh=Math.min(H-330, L*cs*1.0); const ch=gh/L;
+  x.fillStyle='#fff'; x.beginPath(); x.roundRect?x.roundRect(gx-16,gy-16,gw+32,gh+32,22):x.rect(gx-16,gy-16,gw+32,gh+32); x.fill();
+  for(let y=0;y<L;y++){ const st=stageAt(y); for(let w=0;w<52;w++){ const k=y*52+w; let col=st.c,a=.25;
+      if(k<S.age*52){a=1;} else if(S.fire&&y>=S.fire.age&&y<S.fire.R){col=GOLD;a=1;}
+      x.globalAlpha=a; x.fillStyle=col; x.fillRect(gx+w*cs,gy+y*ch,cs-2,ch-2); } }
+  x.globalAlpha=1;
+  x.fillStyle='#FFE14D'; x.font="800 34px Onest"; x.textAlign='center'; x.fillText('напиши «время» @artur__yunusov',W/2,H-48);
+  c.toBlob(async b=>{ const f=new File([b],'zhizn-v-nedelyah.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){ try{ await navigator.share({files:[f]}); return; }catch(e){} }
+    const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='zhizn-v-nedelyah.png'; a.click(); },'image/png');
+};
+</script>
+</body>
+</html>
